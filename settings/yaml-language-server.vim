@@ -1,6 +1,6 @@
 augroup vimlsp_settings_yaml_language_server
   au!
-  autocmd User lsp_setup ++once call lsp#register_server({
+  let settings = {
       \ 'name': 'yaml-language-server',
       \ 'cmd': {server_info->lsp_settings#get('yaml-language-server', 'cmd', [lsp_settings#exec_path('yaml-language-server'), '--stdio'])},
       \ 'root_uri':{server_info->lsp_settings#get('yaml-language-server', 'root_uri', lsp#utils#path_to_uri(lsp#utils#find_nearest_parent_file_directory(lsp#utils#get_buffer_path(), ['.git/'])))},
@@ -8,5 +8,10 @@ augroup vimlsp_settings_yaml_language_server
       \ 'blacklist': lsp_settings#get('yaml-language-server', 'blacklist', []),
       \ 'config': lsp_settings#get('yaml-language-server', 'config', {}),
       \ 'workspace_config': lsp_settings#get('yaml-language-server', 'workspace_config', {}),
-      \ })
+      \ }
+  if has('patch-8.1.000')
+    autocmd User lsp_setup ++once call lsp#register_server(settings)
+  else
+    autocmd User lsp_setup call lsp#register_server(settings)
+  endif
 augroup END
